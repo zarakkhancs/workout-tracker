@@ -6,7 +6,8 @@ def get_db_connection():
     database_path = os.path.join(os.path.dirname(__file__), 'workout.db')
 
     # connect to database file (create it if it's missing)
-    connection = sqlite3.connect('workout.db')
+    connection = sqlite3.connect("workout.db")
+    connection.row_factory = sqlite3.Row
     return connection
 
 

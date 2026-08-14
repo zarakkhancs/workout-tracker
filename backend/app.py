@@ -13,7 +13,7 @@ def get_exercises():
     cursor = connection.cursor()
 
     cursor.execute("SELECT * FROM exercise")
-    exercises = cursor.fetchall()
+    exercises = [dict(row) for row in cursor.fetchall()]
 
     # close
     connection.close()
