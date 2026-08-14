@@ -5,6 +5,8 @@ from database import get_db_connection
 app = Flask(__name__)
 CORS(app) # Allows React frontend to talk to this backend
 
+
+# get
 @app.route('/api/exercises', methods=['GET'])
 def get_exercises():
     # getting connection from database (opens workout.db)
@@ -92,6 +94,47 @@ def delete_exercise(id):
     # 200 = successful delete
     return jsonify({"message": "Exercise deleted successfully"}), 200
 
+
+# get but for workout_session
+@app.route('/api/workout_sessions', methods=['GET'])
+def get_workout_sessions():
+    # getting connection from database (opens workout.db)
+    connection = get_db_connection()
+    # create cursor object to exceute SQL statements
+    cursor = connection.cursor()
+
+    cursor.execute("SELECT * FROM workout_session")
+    workout_sessions = [dict(row) for row in cursor.fetchall()]
+
+    # close
+    connection.close()
+
+    return jsonify(workout_sessions)
+
+# post but for workout_session
+@app.route('/api/workout_sessions', methods=['POST'])
+def send_workout_esssion():
+
+    # create data variable for reading json using our imported request
+    data = request.get_json()
+
+    # read date from data
+    date = data["date"]
+
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        INSERT INTO workout_session (date)
+        VALUES (?)
+    """, (date,))
+
+    # commit and close
+    connection.commit()
+    connection.close()
+
+    # we add 201 because new resource created using status code 201
+    return jsonify(data), 201
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

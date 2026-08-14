@@ -12,20 +12,32 @@ function App() {
       .then(data => setExercises(data))
   }, [])
 
-  // function to add exercise and muscle group, uses our post function we defined in backend app.py
-  // we use this because we want to send flask some new data, i.e. REACT -> FLASK
+  // Sends the new exercise to Flask using our POST endpoint
+  // React -> Flask -> SQLite
   const addExercise = () => {
-  fetch('http://127.0.0.1:5000/api/exercises', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      name: name,
-      muscle_group: muscleGroup,
-    }),
-  })
-}
+    fetch('http://127.0.0.1:5000/api/exercises', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: name,
+        muscle_group: muscleGroup,
+      }),
+    })
+      // After the exercise is added, get the updated list
+      .then(response => response.json())
+      .then(() => {
+        // Clear the input fields
+        setName('')
+        setMuscleGroup('')
+
+        // Fetch the updated exercises from Flask
+        fetch('http://127.0.0.1:5000/api/exercises')
+          .then(response => response.json())
+          .then(data => setExercises(data))
+      })
+  }
 
   return (
     <div>
