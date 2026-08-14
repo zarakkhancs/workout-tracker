@@ -49,7 +49,7 @@ def send_exercises():
 
 # now for put
 @app.route('/api/exercises/<id>', methods=['PUT'])
-def update_exercises(id):
+def update_exercise(id):
 
     # create data variable for reading json using our imported request
     data = request.get_json()
@@ -73,6 +73,24 @@ def update_exercises(id):
     
     # 200 = successful update
     return jsonify(data), 200
+
+# now for delete
+@app.route('/api/exercises/<id>', methods=['DELETE'])
+def delete_exercise(id):
+
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+    DELETE FROM exercise WHERE id = ?;
+    """, (id,))
+
+    # commit and close
+    connection.commit()
+    connection.close()
+    
+    # 200 = successful delete
+    return jsonify({"message": "Exercise deleted successfully"}), 200
 
 
 if __name__ == '__main__':
