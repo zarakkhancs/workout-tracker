@@ -47,5 +47,33 @@ def send_exercises():
     return jsonify(data), 201
 
 
+# now for put
+@app.route('/api/exercises/<id>', methods=['PUT'])
+def update_exercises(id):
+
+    # create data variable for reading json using our imported request
+    data = request.get_json()
+
+    # read name and muscle_group from data
+    name = data["name"]
+    muscle_group = data["muscle_group"]
+
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+    UPDATE exercise
+    SET name = ?, muscle_group = ?
+    WHERE id = ?
+    """, (name, muscle_group, id))
+
+    # commit and close
+    connection.commit()
+    connection.close()
+    
+    # 200 = successful update
+    return jsonify(data), 200
+
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
