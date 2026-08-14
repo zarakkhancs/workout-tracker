@@ -5,11 +5,17 @@ function App() {
   const [exercises, setExercises] = useState([])
   const [name, setName] = useState('')
   const [muscleGroup, setMuscleGroup] = useState('')
+  // now for workout_session
+  const [workoutSessions, setWorkoutSessions] = useState([])
 
   useEffect(() => {
     fetch('http://127.0.0.1:5000/api/exercises')
       .then(response => response.json())
       .then(data => setExercises(data))
+
+    fetch('http://127.0.0.1:5000/api/workout_sessions')
+      .then(response => response.json())
+      .then(data => setWorkoutSessions(data))
   }, [])
 
   // Sends the new exercise to Flask using our POST endpoint
@@ -42,6 +48,14 @@ function App() {
   return (
     <div>
       <h1>Workout Progression Tracker</h1>
+
+      <h2>Workout Sessions</h2>
+
+      {workoutSessions.map(session => (
+        <div key={session.id}>
+          <h3>{session.date}</h3>
+        </div>
+      ))}
 
       <h2>Exercises</h2>
 
