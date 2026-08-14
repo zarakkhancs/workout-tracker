@@ -2,6 +2,7 @@
 venv/
 __pycache__/
 *.sqlite3
+backend/workout.db
 
 # Frontend
 node_modules/
