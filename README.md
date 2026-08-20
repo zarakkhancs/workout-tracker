@@ -129,6 +129,7 @@ The application uses a relational database to model workouts, exercises, and per
 
 Suppose a user completes the following workout on August 20, 2026:
 
+```text
 Chest Day
 ├── Bench Press
 │   ├── Set 1: 135 × 8
@@ -138,6 +139,7 @@ Chest Day
 └── Incline Bench Press
     ├── Set 1: 95 × 10
     └── Set 2: 95 × 10
+```
 
 This data is represented using four tables:
 
