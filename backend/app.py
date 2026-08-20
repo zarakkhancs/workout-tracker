@@ -163,5 +163,25 @@ def update_workout_session(id):
     # 200 = successful update
     return jsonify(data), 200
 
+# WORK CODE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# delete but for workout_session
+@app.route('/api/workout_sessions/<id>', methods=['DELETE'])
+def delete_workout_session(id):
+
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+    DELETE FROM workout_session WHERE id = ?;
+    """, (id,))
+
+    # commit and close
+    connection.commit()
+    connection.close()
+    
+    # 200 = successful delete
+    return jsonify({"message": "Workout session deleted successfully"}), 200
+
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
