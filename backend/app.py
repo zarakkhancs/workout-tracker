@@ -247,5 +247,25 @@ def send_workout_exercise():
     return jsonify(data), 201
 
 
+# WORK CODE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# delete but for workout_exercise
+@app.route('/api/workout_exercises/<id>', methods=['DELETE'])
+def delete_workout_exercise(id):
+
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+    DELETE FROM workout_exercise WHERE id = ?;
+    """, (id,))
+
+    # commit and close
+    connection.commit()
+    connection.close()
+    
+    # 200 = successful delete
+    return jsonify({"message": "Workout exercise deleted successfully"}), 200
+
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
