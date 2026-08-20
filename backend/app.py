@@ -266,6 +266,56 @@ def delete_workout_exercise(id):
     # 200 = successful delete
     return jsonify({"message": "Workout exercise deleted successfully"}), 200
 
+# WORK CODE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# get but for exercise sets
+@app.route('/api/exercise_sets', methods=['GET'])
+def get_exercise_set():
+
+    # open database connection
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        SELECT
+            exercise_set.id,
+            exercise.name AS exercise_name,
+            workout_session.date AS workout_date,
+            exercise_set.set_number,
+            exercise_set.weight,
+            exercise_set.reps
+
+        FROM exercise_set
+
+        -- exercise_set -> workout_exercise
+        JOIN workout_exercise
+            ON exercise_set.workout_exercise_id = workout_exercise.id
+
+        -- workout_exercise -> exercise
+        JOIN exercise
+            ON workout_exercise.exercise_id = exercise.id
+
+        -- workout_exercise -> workout_session
+        JOIN workout_session
+            ON workout_exercise.workout_session_id = workout_session.id
+    """)
+
+	# convert SQL rows into dictionaries
+    # Example:
+    # {
+    # "id": 1,
+    # "exercise_name": "Bench Press",
+    # "workout_date": "2026-08-20",
+    # "set_number": 1,
+    # "weight": 135,
+    # "reps": 8
+    # }
+
+    exercise_sets = [dict(row) for row in cursor.fetchall()]
+
+    connection.close()
+
+    return jsonify(exercise_sets)
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
