@@ -121,6 +121,102 @@ workout-tracker/
 
 ---
 
+## Database Relationships
+
+The application uses a relational database to model workouts, exercises, and performance history.
+
+### Example: Chest Day Workout
+
+Suppose a user completes the following workout on August 20, 2026:
+
+Chest Day
+├── Bench Press
+│   ├── Set 1: 135 × 8
+│   ├── Set 2: 135 × 8
+│   └── Set 3: 135 × 7
+│
+└── Incline Bench Press
+    ├── Set 1: 95 × 10
+    └── Set 2: 95 × 10
+
+This data is represented using four tables:
+
+### workout_session
+
+Represents a single workout session.
+
+| id | date |
+|----|------|
+| 1 | 2026-08-20 |
+
+---
+
+### exercise
+
+Stores all available exercises that can be reused across workouts.
+
+| id | name |
+|----|------|
+| 1 | Bench Press |
+| 2 | Incline Bench Press |
+| 3 | Squat |
+| 4 | Deadlift |
+
+---
+
+### workout_exercise
+
+Connects an exercise to a specific workout session.
+
+| id | workout_session_id | exercise_id |
+|----|-------------------|------------|
+| 1 | 1 | 1 |
+| 2 | 1 | 2 |
+
+This means:
+
+- Workout Session #1 contains Bench Press.
+- Workout Session #1 contains Incline Bench Press.
+
+---
+
+### exercise_set
+
+Stores the actual workout performance data.
+
+| id | workout_exercise_id | set_number | weight | reps |
+|----|--------------------|------------|--------|------|
+| 1 | 1 | 1 | 135 | 8 |
+| 2 | 1 | 2 | 135 | 8 |
+| 3 | 1 | 3 | 135 | 7 |
+| 4 | 2 | 1 | 95 | 10 |
+| 5 | 2 | 2 | 95 | 10 |
+
+---
+
+### Relationship Diagram
+
+```text
+Workout Session
+│
+├── Workout Exercise (Bench Press)
+│      ├── Set 1: 135 × 8
+│      ├── Set 2: 135 × 8
+│      └── Set 3: 135 × 7
+│
+└── Workout Exercise (Incline Bench Press)
+       ├── Set 1: 95 × 10
+       └── Set 2: 95 × 10
+
+Exercise Library
+├── Bench Press
+├── Incline Bench Press
+├── Squat
+└── Deadlift
+```
+
+The `exercise` table acts as a reusable exercise library, while `workout_exercise` connects exercises to specific workout sessions. `exercise_set` stores the actual performance data used for workout history tracking and future progressive overload recommendations.
+
 ## Running Locally
 
 ### Prerequisites
