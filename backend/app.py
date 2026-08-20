@@ -214,6 +214,38 @@ def get_workout_exercise():
 
     return jsonify(workout_exercises)
 
+# WORK CODE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# post but for workout_exercise
+    # workout_exercise is a junction table that links
+    # an exercise to a specific workout session.
+    # Example:
+    # Workout Session #1 -> Bench Press	
+
+@app.route('/api/workout_exercises', methods=['POST'])
+def send_workout_exercise():
+
+    # create data variable for reading json using our imported request
+    data = request.get_json()
+
+    # read exercise and workout session IDs from JSON payload
+    exercise_id = data["exercise_id"]
+    workout_session_id = data["workout_session_id"]
+
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        INSERT INTO workout_exercise (exercise_id, workout_session_id)
+        VALUES (?, ?)
+    """, (exercise_id, workout_session_id))
+
+    # commit and close
+    connection.commit()
+    connection.close()
+
+    # we add 201 because new resource created using status code 201
+    return jsonify(data), 201
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
