@@ -182,6 +182,38 @@ def delete_workout_session(id):
     # 200 = successful delete
     return jsonify({"message": "Workout session deleted successfully"}), 200
 
+# WORK CODE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# get but for workout_exercise
+@app.route('/api/workout_exercises', methods=['GET'])
+def get_workout_exercise():
+    # getting connection from database (opens workout.db)
+    connection = get_db_connection()
+    # create cursor object to exceute SQL statements
+    cursor = connection.cursor()
+
+    # workout_exercise only stores IDs.
+    # JOINs allow us to bring in related data from other tables.
+    # exercise_id -> exercise.name
+    # workout_session_id -> workout_session.date
+    # Result:
+    # id | exercise_name | workout_date
+
+    cursor.execute("SELECT
+    	workout_exercise.id,
+    	exercise.name,
+    	workout_session.date
+	FROM workout_exercise
+	JOIN exercise
+    	ON workout_exercise.exercise_id = exercise.id
+	JOIN workout_session
+    ON workout_exercise.workout_session_id = workout_session.id")
+    workout_exercises = [dict(row) for row in cursor.fetchall()]
+
+    # close
+    connection.close()
+
+    return jsonify(workout_exercises)
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
