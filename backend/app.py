@@ -246,6 +246,11 @@ def send_workout_exercise():
     # we add 201 because new resource created using status code 201
     return jsonify(data), 201
 
+# NOTE:
+# No PUT endpoint is implemented for workout_exercise.
+# If an incorrect exercise is attached to a workout session,
+# the relationship can simply be deleted and recreated.
+# Editing the relationship directly provides little benefit.
 
 # WORK CODE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # delete but for workout_exercise
@@ -316,6 +321,83 @@ def get_exercise_set():
 
     return jsonify(exercise_sets)
 
+# WORK CODE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# post but for exercise_set
+@app.route('/api/exercise_sets', methods=['POST'])
+def send_exercise_set():
+
+    # create data variable for reading json using our imported request
+    data = request.get_json()
+
+    # read workout_exercise_id, set_number, weight, and reps
+	workout_exercise_id = data["workout_exercise_id"]
+    set_number = data["set_number"]
+    weight = data["weight"]
+	reps = data["reps"]
+
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        INSERT INTO exercise_set (workout_exercise_id, set_number, weight, reps)
+        VALUES (?, ?, ?)
+    """, (workout_exercise_id, set_number, weight, reps))
+
+    # commit and close
+    connection.commit()
+    connection.close()
+
+    # we add 201 because new resource created using status code 201
+    return jsonify(data), 201
+
+
+# WORK CODE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# put but for exercise_set
+@app.route('/api/exercise_sets/<id>', methods=['PUT'])
+def update_exercise_set(id):
+
+    # create data variable for reading json using our imported request
+    data = request.get_json()
+
+    # read set_number, weight, and reps
+    set_number = data["set_number"]
+    weight = data["weight"]
+	reps = data["reps"]
+
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+    UPDATE exercise_set
+    SET set_number = ?, weight = ?, reps = ?
+    WHERE id = ?
+    """, (set_number, weight, reps, id))
+
+    # commit and close
+    connection.commit()
+    connection.close()
+    
+    # 200 = successful update
+    return jsonify(data), 200
+
+# WORK CODE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# delete but for exercise_set
+@app.route('/api/exercise_sets/<id>', methods=['DELETE'])
+def delete_exercise_set(id):
+
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+    DELETE FROM exercise_set WHERE id = ?;
+    """, (id,))
+
+    # commit and close
+    connection.commit()
+    connection.close()
+    
+    # 200 = successful delete
+    return jsonify({"message": "Exercise set deleted successfully"}), 200
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
